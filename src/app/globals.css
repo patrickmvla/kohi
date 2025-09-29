@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Print helpers for resume */
+@media print {
+  :root { color-scheme: light; }
+  body { background: #fff !important; color: #000 !important; }
+  a { color: #000 !important; text-decoration: underline; }
+}
+.avoid-break { break-inside: avoid; page-break-inside: avoid; }
+
+/* Tailwind v4 theme tokens */
+@theme {
+  /* JetBrains Mono via next/font variable */
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* “Kohi” — warm coffee palette */
+  --color-brand-50:  #faf7f2;
+  --color-brand-100: #ede3d3;
+  --color-brand-200: #dac4a9;
+  --color-brand-300: #c49e76;
+  --color-brand-400: #b17d4d; /* Accent for links/details */
+  --color-brand-500: #9e632e;
+  --color-brand-600: #874f21; /* Primary buttons/accents */
+  --color-brand-700: #6b3f1b;
+  --color-brand-800: #4f2f14;
+  --color-brand-900: #3b240f;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+:root { color-scheme: dark; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+html { scroll-behavior: smooth; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #0a0a0a; /* zinc-950-ish */
+  color: rgb(228 228 231); /* zinc-200 */
+  font-feature-settings: "ss01" 1, "ss02" 1;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-brand-600) 28%, transparent);
+}
+
+/* Subtle container rhythm helpers (optional) */
+.section {
+  padding-block: clamp(3rem, 6vw, 5rem);
+}
+.container {
+  width: 100%;
+  max-width: 72rem; /* ~max-w-6xl */
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+/* Fine hairline borders on dark */
+.hairline {
+  border: 1px solid color-mix(in oklab, white 10%, transparent);
+}
+
+/* Card surface */
+.surface {
+  background: color-mix(in oklab, white 6%, transparent);
+  backdrop-filter: blur(8px);
+  border: 1px solid color-mix(in oklab, white 10%, transparent);
 }
