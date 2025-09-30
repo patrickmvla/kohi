@@ -48,12 +48,12 @@ const contactHref = '/contact'
             >
               Projects
             </Link>
-            <Link
+            {/* <Link
               href="/blog"
               className={`${linkBase} ${isActive('/blog') ? 'text-white' : 'text-zinc-400'}`}
             >
               Blog
-            </Link>
+            </Link> */}
             <Link
               href="/reading"
               className={`${linkBase} ${isActive('/reading') ? 'text-white' : 'text-zinc-400'}`}
@@ -65,6 +65,12 @@ const contactHref = '/contact'
               className={`${linkBase} ${pathname === '/' ? 'text-zinc-400 hover:text-white' : 'text-zinc-400 hover:text-white'}`}
             >
               Contact
+            </Link>
+            <Link
+              href="/about"
+              className={`${linkBase} ${pathname === '/' ? 'text-zinc-400 hover:text-white' : 'text-zinc-400 hover:text-white'}`}
+            >
+              About
             </Link>
           </div>
 

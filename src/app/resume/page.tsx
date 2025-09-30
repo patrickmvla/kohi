@@ -29,7 +29,8 @@ export default function ResumePage() {
   return (
     <main className="section">
       <div className="container">
-        <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 bg-white/5 p-6 print:border-0 print:bg-transparent">
+        {/* Wider on desktop, comfy padding; keep print clean */}
+        <div className="mx-auto max-w-4xl lg:max-w-5xl rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8 print:border-0 print:bg-transparent print:w-full print:max-w-none">
           {/* Header */}
           <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -41,6 +42,7 @@ export default function ResumePage() {
                 <p className="text-xs text-zinc-500">{resume.location}</p>
               )}
             </div>
+
             <div className="text-sm text-zinc-400 print:text-black">
               <div className="flex flex-wrap gap-x-3 gap-y-1">
                 {resume.email && (
@@ -49,6 +51,14 @@ export default function ResumePage() {
                     href={`mailto:${resume.email}`}
                   >
                     {resume.email}
+                  </a>
+                )}
+                {resume.phone && (
+                  <a
+                    className="hover:text-white print:hover:text-black"
+                    href={`tel:${resume.phone.replace(/\s+/g, "")}`}
+                  >
+                    {resume.phone}
                   </a>
                 )}
                 {resume.website && (
@@ -73,9 +83,10 @@ export default function ResumePage() {
                   </a>
                 ))}
               </div>
-              {/* Screen-only actions */}
-              <div className="mt-2 hidden gap-2 print:hidden sm:flex">
-                <PrintButton /> {/* <-- use client button here */}
+
+              {/* Screen-only actions (subtle, right-aligned) */}
+              <div className="mt-2 hidden justify-end gap-2 print:hidden sm:flex">
+                <PrintButton />
               </div>
             </div>
           </header>
@@ -161,7 +172,7 @@ export default function ResumePage() {
             </div>
           </Section>
 
-          {/* Projects (optional highlights) */}
+          {/* Projects */}
           {resume.projects?.length ? (
             <Section title="Selected Projects">
               <div className="grid gap-3">

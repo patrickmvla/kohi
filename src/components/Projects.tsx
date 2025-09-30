@@ -1,5 +1,5 @@
 // components/Projects.tsx
-import ProjectCard, { type Project } from './ProjectCard'
+import ProjectCard, { type Project } from "./ProjectCard";
 
 export default function Projects({ projects }: { projects: Project[] }) {
   return (
@@ -11,5 +11,5 @@ export default function Projects({ projects }: { projects: Project[] }) {
         ))}
       </div>
     </section>
-  )
+  );
 }

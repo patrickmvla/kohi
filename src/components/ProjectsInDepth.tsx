@@ -1,4 +1,4 @@
-import CaseStudyCard, { type CaseStudy } from './CaseStudyCard'
+import CaseStudyCard, { type CaseStudy } from "./CaseStudyCard";
 
 export default function ProjectsInDepth({ studies }: { studies: CaseStudy[] }) {
   return (
@@ -6,7 +6,8 @@ export default function ProjectsInDepth({ studies }: { studies: CaseStudy[] }) {
       <div className="container">
         <h2 className="text-2xl font-semibold">Projects — in depth</h2>
         <p className="mt-2 max-w-2xl text-sm text-zinc-400">
-          Work that mattered: context, constraints, and the decisions in-between.
+          Work that mattered: context, constraints, and the decisions
+          in-between.
         </p>
 
         <div className="mt-8 grid gap-6">
@@ -16,5 +17,5 @@ export default function ProjectsInDepth({ studies }: { studies: CaseStudy[] }) {
         </div>
       </div>
     </section>
-  )
+  );
 }

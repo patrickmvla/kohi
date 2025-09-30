@@ -62,7 +62,7 @@ export async function POST(req: Request) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
   const userAgent = req.headers.get("user-agent") ?? null;
 
-  // 1) Insert email record (status=received)
+ 
   let emailId: number | undefined;
   if (db) {
     try {
@@ -83,7 +83,6 @@ export async function POST(req: Request) {
     }
   }
 
-  // 2) Send via Resend
   const resend = new Resend(apiKey);
   const subject = `New contact from ${name} — kohi`;
   const text = `Name: ${name}\nEmail: ${email}\n\n${message}`;

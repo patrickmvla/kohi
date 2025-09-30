@@ -1,14 +1,14 @@
 // src/app/reading/page.tsx
-import type { Metadata } from 'next'
-import ReadingHero from '@/components/reading/ReadingHero'
-import CurrentlyReading from '@/components/reading/CurrentlyReading'
-import ReadingExplorer from '@/components/reading/ReadingExplorer'
-import { readingItems } from '@/lib/reading'
+import type { Metadata } from "next";
+import ReadingHero from "@/components/reading/ReadingHero";
+import CurrentlyReading from "@/components/reading/CurrentlyReading";
+import ReadingExplorer from "@/components/reading/ReadingExplorer";
+import { readingItems } from "@/lib/reading";
 
 export const metadata: Metadata = {
-  title: 'Reading — kohi',
-  description: 'Books, papers, and articles shaping my current thinking.',
-}
+  title: "Reading — kohi",
+  description: "Books, papers, and articles shaping my current thinking.",
+};
 
 export default function ReadingPage() {
   return (
@@ -17,5 +17,5 @@ export default function ReadingPage() {
       <CurrentlyReading items={readingItems} />
       <ReadingExplorer items={readingItems} />
     </main>
-  )
+  );
 }

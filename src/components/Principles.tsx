@@ -1,18 +1,18 @@
 // components/Principles.tsx
 const items = [
   {
-    title: 'Clarity first',
-    body: 'Simple interfaces, strong defaults, and APIs that are hard to misuse.',
+    title: "Clarity first",
+    body: "Simple interfaces, strong defaults, and APIs that are hard to misuse.",
   },
   {
-    title: 'Measure, then optimize',
-    body: 'Budgets over averages. Observe the tail and design for p99s.',
+    title: "Measure, then optimize",
+    body: "Budgets over averages. Observe the tail and design for p99s.",
   },
   {
-    title: 'Accessibility by default',
-    body: 'Keyboard‑first, screen‑reader aware, and readable in any theme.',
+    title: "Accessibility by default",
+    body: "Keyboard‑first, screen‑reader aware, and readable in any theme.",
   },
-]
+];
 
 export default function Principles() {
   return (
@@ -29,5 +29,5 @@ export default function Principles() {
         </div>
       </div>
     </section>
-  )
+  );
 }

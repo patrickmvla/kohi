@@ -1,5 +1,4 @@
-// src/app/admin/posts/new/page.tsx
-import PostForm from '@/components/admin/PostForm'
+import PostForm from "@/components/admin/PostForm";
 
 export default function NewPostPage() {
   return (
@@ -9,5 +8,5 @@ export default function NewPostPage() {
         <PostForm mode="create" />
       </div>
     </section>
-  )
+  );
 }

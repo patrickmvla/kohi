@@ -1,116 +1,96 @@
-// lib/case-studies.ts
+// src/lib/case-studies.ts
 export type CaseStudy = {
   slug: string
   title: string
   tagline: string
   summary: string
   role: string
-  period: string // e.g., '2025' or '2024–2025'
+  period: string
   category: 'Product' | 'Systems' | 'Tooling' | 'Open Source'
   stack: string[]
   featured?: boolean
   highlights: string[]
   metrics?: string[]
   image?: string
+  icon?: string // Lucide icon name, e.g., 'Mail', 'Link', 'FileText', 'Wand2'
   links?: { live?: string; code?: string; caseStudy?: string }
 }
 
 export const caseStudies: CaseStudy[] = [
   {
-    slug: 'realtime-analytics',
-    title: 'Realtime Analytics Platform',
-    tagline: 'Sub‑second analytics with a calm API.',
+    slug: 'prompt-studio',
+    title: 'Prompt Studio',
+    tagline: 'LLM prompt engineering with measurable rigor.',
     summary:
-      'Built a sub‑second analytics layer backed by columnar storage and edge caching. Tight focus on correctness, latency, and an ergonomic SDK users could trust.',
-    role: 'Lead Engineer',
-    period: '2024–2025',
+      'Specialized environment for building and testing high‑fidelity prompts with verifiable metrics, adversarial suites, and cost analysis.',
+    role: 'Indie Project',
+    period: '2025',
     category: 'Product',
-    stack: ['Next.js', 'Edge', 'ClickHouse', 'TypeScript'],
+    stack: ['Next.js', 'OpenAI', 'Embeddings (Jina)', 'Postgres'],
     featured: true,
     highlights: [
-      'Query planner with p98 < 400ms',
-      'Streaming exports with backpressure',
-      'Type‑safe client SDK + OpenAPI',
+      'Adversarial testing with “Strictness Score” (99% constraint adherence)',
+      'Semantic validation for intent alignment',
+      'Real‑time collaboration + session persistence',
     ],
-    metrics: ['-42% infra cost vs prior gen', 'NPS +21'],
-    image: '/images/case-analytics.jpg',
-    links: { live: '#', code: '#', caseStudy: '#' },
+    metrics: ['Tracked prompt cost and coverage across suites'],
+    icon: 'Wand2',
+    links: { live: '#', code: '#' },
   },
   {
-    slug: 'kohi-ui',
-    title: 'Kohi UI — Design System',
-    tagline: 'Tokens, primitives, and accessible patterns.',
+    slug: 'ai-gmail-sorter',
+    title: 'AI Gmail Sorter',
+    tagline: 'Intelligent email automation.',
     summary:
-      'A cohesive UI kit that aligned product surfaces and reduced UX friction. Shipped tokens, primitives, and guidance that stuck.',
-    role: 'Systems',
-    period: '2023–2024',
-    category: 'Systems',
-    stack: ['Tailwind', 'Radix', 'Storybook'],
-    highlights: [
-      'Tokenized themes (light/dark/high-contrast)',
-      'Keyboard-first components',
-      'Usage docs + pitfalls',
-    ],
-    metrics: ['30% faster feature delivery', 'Fewer UI regressions'],
-    image: '/images/case-ds.jpg',
-    links: { code: '#', caseStudy: '#' },
-  },
-  {
-    slug: 'payments-orchestration',
-    title: 'Payments Orchestration',
-    tagline: 'Resilient flows, friendly APIs.',
-    summary:
-      'Unified multiple processors behind a stable API. Idempotency, retries, and observability made failure boring.',
-    role: 'Senior Engineer',
-    period: '2024',
+      'Headless AI agent learns email patterns and organizes inboxes with high accuracy. Event‑driven and resilient at scale.',
+    role: 'Indie Project',
+    period: '2025',
     category: 'Product',
-    stack: ['Node', 'Postgres', 'Temporal', 'OpenTelemetry'],
-    highlights: ['Sagas for multi-step flows', 'Circuit breaking + backoff', 'Fine-grained audit logs'],
-    metrics: ['-63% failed chargebacks', '99.98% success rate'],
-    image: '/images/case-payments.jpg',
-    links: { caseStudy: '#' },
+    stack: ['TensorFlow.js', 'Node.js', 'Gmail API', 'GCP Pub/Sub'],
+    highlights: [
+      'Bi‑LSTM model for real‑time classification',
+      'Event‑driven pipeline (<100ms)',
+      '24/7 service handling 1,000+ emails/day',
+    ],
+    metrics: ['~95% classification accuracy'],
+    icon: 'Mail',
+    links: { live: '#', code: '#' },
   },
   {
-    slug: 'oss-test-runner',
-    title: 'OSS Test Runner',
-    tagline: 'Fast, minimal, delightful to use.',
+    slug: 'linklift',
+    title: 'LinkLift',
+    tagline: 'Production‑grade URL shortener on the edge.',
     summary:
-      'Open-source test runner with crisp output and zero-config ergonomics. Focused on speed, DX, and portable primitives.',
-    role: 'Maintainer',
-    period: '2023–2025',
-    category: 'Open Source',
-    stack: ['TypeScript', 'ESBuild', 'Node'],
-    highlights: ['Worker pool + snapshot isolation', 'Watch mode that respects git intent', 'Readable diffs'],
-    metrics: ['~2.3x faster than baseline'],
-    image: '/images/case-oss.jpg',
-    links: { code: '#', caseStudy: '#' },
+      'Sub‑millisecond redirects with real‑time analytics, custom domains, QR codes, and expiry support.',
+    role: 'Indie Project',
+    period: '2025',
+    category: 'Product',
+    stack: ['Vercel Edge', 'Next.js', 'Redis', 'Workers/Queues'],
+    highlights: [
+      'Sub‑ms redirects, per‑link analytics',
+      'Custom domains + QR codes + expiration',
+      'Queue‑backed analytics, 99.9% uptime',
+    ],
+    metrics: ['1M+ clicks tracked'],
+    icon: 'Link',
+    links: { live: '#', code: '#' },
   },
   {
-    slug: 'schema-inspector',
-    title: 'Schema Inspector',
-    tagline: 'Developer tools for confidence.',
+    slug: 'pdf2md',
+    title: 'pdf2md',
+    tagline: 'Privacy‑first PDF → Markdown converter.',
     summary:
-      'A schema diff and migration tool that keeps teams confident. Highlights breaking changes and suggests safe paths.',
-    role: 'Engineer',
-    period: '2024',
+      'All processing in the browser. Drag‑and‑drop batch conversion with progress and offline PWA.',
+    role: 'Indie Project',
+    period: '2025',
     category: 'Tooling',
-    stack: ['Rust', 'SQLite', 'WASM'],
-    highlights: ['AST-based diffs', 'Humanized output', 'CI annotations'],
-    image: '/images/case-schema.jpg',
-    links: { code: '#', caseStudy: '#' },
-  },
-  {
-    slug: 'data-sync',
-    title: 'Edge Data Sync',
-    tagline: 'Eventually consistent, practically fast.',
-    summary:
-      'A sync layer for edge-cacheable data with CRDT-inspired merges. Clear conflict semantics and strong observability.',
-    role: 'Engineer',
-    period: '2023',
-    category: 'Systems',
-    stack: ['Edge', 'Redis', 'TypeScript'],
-    highlights: ['Conflict handling with vector clocks', 'Observability-first design', 'Backpressure-aware queues'],
-    image: '/images/case-sync.jpg',
-    links: { caseStudy: '#' },
+    stack: ['PWA', 'Web Workers', 'React', 'Next.js'],
+    highlights: [
+      'Client‑side only — 100% privacy (no uploads)',
+      'Batch conversion with live progress',
+      'Offline support via PWA',
+    ],
+    icon: 'FileText',
+    links: { live: '#', code: '#' },
   },
 ]

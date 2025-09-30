@@ -1,6 +1,7 @@
 // components/FeaturedWork.tsx
 import Link from 'next/link'
 import type { CaseStudy } from '@/lib/case-studies'
+import ProjectMedia from './projects/ProjectMedia'
 
 export default function FeaturedWork({ cs }: { cs: CaseStudy }) {
   return (
@@ -50,10 +51,7 @@ export default function FeaturedWork({ cs }: { cs: CaseStudy }) {
 
           <div className="sm:col-span-2">
             <div className="aspect-[4/3] overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent">
-              {cs.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={cs.image} alt={cs.title} className="h-full w-full object-cover" />
-              ) : <div className="h-full w-full" />}
+             <ProjectMedia title={cs.title} image={cs.image} icon={cs.icon} ratioClass="aspect-[4/3]" />
             </div>
             <div className="mt-4 flex flex-wrap gap-2 text-xs text-zinc-400">
               {cs.stack.map(s => (

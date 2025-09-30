@@ -1,14 +1,14 @@
 export type CaseStudy = {
-  title: string
-  summary: string
-  role: string
-  period?: string
-  stack: string[]
-  highlights: string[]
-  impact?: string[]
-  image?: string
-  links?: { live?: string; code?: string; caseStudy?: string }
-}
+  title: string;
+  summary: string;
+  role: string;
+  period?: string;
+  stack: string[];
+  highlights: string[];
+  impact?: string[];
+  image?: string;
+  links?: { live?: string; code?: string; caseStudy?: string };
+};
 
 export default function CaseStudyCard({ cs }: { cs: CaseStudy }) {
   return (
@@ -18,16 +18,26 @@ export default function CaseStudyCard({ cs }: { cs: CaseStudy }) {
         <p className="mt-2 text-sm text-zinc-400">{cs.summary}</p>
 
         <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-zinc-400">
-          <span className="rounded border border-white/10 px-2 py-1 text-zinc-300">{cs.role}</span>
-          {cs.period && <span className="rounded border border-white/10 px-2 py-1">{cs.period}</span>}
+          <span className="rounded border border-white/10 px-2 py-1 text-zinc-300">
+            {cs.role}
+          </span>
+          {cs.period && (
+            <span className="rounded border border-white/10 px-2 py-1">
+              {cs.period}
+            </span>
+          )}
           {cs.stack.map((t) => (
-            <span key={t} className="rounded border border-white/10 px-2 py-1">{t}</span>
+            <span key={t} className="rounded border border-white/10 px-2 py-1">
+              {t}
+            </span>
           ))}
         </div>
 
         <ul className="mt-5 space-y-2 text-sm text-zinc-300">
           {cs.highlights.map((h) => (
-            <li key={h} className="leading-relaxed">— {h}</li>
+            <li key={h} className="leading-relaxed">
+              — {h}
+            </li>
           ))}
         </ul>
 
@@ -41,17 +51,30 @@ export default function CaseStudyCard({ cs }: { cs: CaseStudy }) {
 
         <div className="mt-5 flex flex-wrap gap-4 text-sm">
           {cs.links?.live && (
-            <a className="text-brand-400 hover:text-brand-300" href={cs.links.live} target="_blank" rel="noreferrer">
+            <a
+              className="text-brand-400 hover:text-brand-300"
+              href={cs.links.live}
+              target="_blank"
+              rel="noreferrer"
+            >
               Live →
             </a>
           )}
           {cs.links?.code && (
-            <a className="text-zinc-400 hover:text-white" href={cs.links.code} target="_blank" rel="noreferrer">
+            <a
+              className="text-zinc-400 hover:text-white"
+              href={cs.links.code}
+              target="_blank"
+              rel="noreferrer"
+            >
               Code →
             </a>
           )}
           {cs.links?.caseStudy && (
-            <a className="text-zinc-400 hover:text-white" href={cs.links.caseStudy}>
+            <a
+              className="text-zinc-400 hover:text-white"
+              href={cs.links.caseStudy}
+            >
               Case study →
             </a>
           )}
@@ -63,12 +86,16 @@ export default function CaseStudyCard({ cs }: { cs: CaseStudy }) {
           {/* Replace with <Image /> and a real screenshot */}
           {cs.image ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={cs.image} alt={cs.title} className="h-full w-full object-cover" />
+            <img
+              src={cs.image}
+              alt={cs.title}
+              className="h-full w-full object-cover"
+            />
           ) : (
             <div className="h-full w-full" />
           )}
         </div>
       </div>
     </article>
-  )
+  );
 }

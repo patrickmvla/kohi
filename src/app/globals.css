@@ -26,7 +26,7 @@
   --color-brand-900: #3b240f;
 }
 
-:root { color-scheme: dark; }
+:root { color-scheme: dark; --section-space: clamp(1.75rem, 3vw, 2.75rem);}
 
 html { scroll-behavior: smooth; }
 
@@ -41,9 +41,22 @@ body {
 }
 
 /* Subtle container rhythm helpers (optional) */
+/* Section spacing: default + compact presets */
 .section {
-  padding-block: clamp(3rem, 6vw, 5rem);
+  /* Default section spacing (keeps existing feel site‑wide) */
+  padding-block: var(--section-space, clamp(3rem, 6vw, 5rem));
 }
+
+/* Compact page preset (nice for About) */
+.section-compact {
+  --section-space: clamp(1.75rem, 3vw, 2.75rem);
+}
+
+/* Even tighter, if you ever want it */
+.section-tight {
+  --section-space: clamp(1.25rem, 2.5vw, 2rem);
+}
+
 .container {
   width: 100%;
   max-width: 72rem; /* ~max-w-6xl */

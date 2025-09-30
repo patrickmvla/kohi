@@ -33,7 +33,7 @@ export default function Home() {
       <Skills /> {/* <- here */}
       {featured && <FeaturedWork cs={featured} />}
       <Principles />
-      <BlogTeaser posts={posts} limit={3} />
+      {/* <BlogTeaser posts={posts} limit={3} /> */}
       <ReadingNow books={readingShelf} />
       <ContactCTA />
       {/* <ContactRHF /> */}
