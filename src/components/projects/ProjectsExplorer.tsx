@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -20,7 +21,7 @@ export default function ProjectsExplorer({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Focus search on Cmd/Ctrl+K and scroll to filter
+  // Focus search on Cmd/Ctrl+K and scroll to the filter bar
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -68,12 +69,17 @@ export default function ProjectsExplorer({
     return arr;
   }, [studies, q, categories, sort]);
 
-  const toggleCategory = (c: string) =>
+  const toggleCategory = (c: string) => {
     setCategories((prev) => {
-      const next = new Set(prev);
-      next.has(c) ? next.delete(c) : next.add(c);
+      const next: Set<string> = new Set(prev);
+      if (next.has(c)) {
+        next.delete(c);
+      } else {
+        next.add(c);
+      }
       return next;
     });
+  };
 
   const clearFilters = () => {
     setQ("");
@@ -188,7 +194,7 @@ export default function ProjectsExplorer({
             })}
           </div>
 
-          {/* Result count (subtle) */}
+          {/* Result count */}
           <div className="mt-2 text-right text-xs text-zinc-500">
             Showing {filtered.length} of {studies.length}
           </div>

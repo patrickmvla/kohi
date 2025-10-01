@@ -1,10 +1,9 @@
-// src/components/reading/CurrentlyReading.tsx
-import type { ReadingItem } from '@/lib/reading'
-import ReadingCard from './ReadingCard'
+import type { ReadingItem } from "@/lib/reading";
+import ReadingCard from "./ReadingCard";
 
 export default function CurrentlyReading({ items }: { items: ReadingItem[] }) {
-  const current = items.filter((i) => i.status === 'reading')
-  if (current.length === 0) return null
+  const current = items.filter((i) => i.status === "reading");
+  if (current.length === 0) return null;
 
   return (
     <section className="section">
@@ -12,7 +11,9 @@ export default function CurrentlyReading({ items }: { items: ReadingItem[] }) {
         <div className="flex items-end justify-between gap-4">
           <div>
             <h2 className="text-2xl font-semibold">Currently reading</h2>
-            <p className="mt-2 max-w-2xl text-sm text-zinc-400">A snapshot of what’s open on the desk right now.</p>
+            <p className="mt-2 max-w-2xl text-sm text-zinc-400">
+              A snapshot of what’s open on the desk right now.
+            </p>
           </div>
         </div>
 
@@ -33,5 +34,5 @@ export default function CurrentlyReading({ items }: { items: ReadingItem[] }) {
         </div>
       </div>
     </section>
-  )
+  );
 }

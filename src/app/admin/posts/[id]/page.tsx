@@ -4,16 +4,22 @@ import { posts } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import PostForm from "@/components/admin/PostForm";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export default async function EditPostPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const id = Number(params.id);
-  if (!db || Number.isNaN(id)) notFound();
-  const row = (
-    await db.select().from(posts).where(eq(posts.id, id)).limit(1)
-  )[0];
+  const { id } = await params;
+  const postId = Number(id);
+  if (!db || Number.isNaN(postId)) notFound();
+
+  const row =
+    (await db.select().from(posts).where(eq(posts.id, postId)).limit(1))[0] ||
+    null;
+
   if (!row) notFound();
 
   return (

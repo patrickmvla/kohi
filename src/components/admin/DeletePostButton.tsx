@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -14,7 +13,7 @@ export default function DeletePostButton({ id }: { id: number }) {
       const res = await fetch(`/api/admin/posts/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error(await res.text());
       router.refresh();
-    } catch (e) {
+    } catch {
       alert("Failed to delete.");
     } finally {
       setPending(false);

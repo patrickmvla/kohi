@@ -1,17 +1,13 @@
-import Header from "@/components/Header";
-import Hero from "@/components/Hero";
-import Skills from "@/components/Skills"; // <- add
-import FeaturedWork from "@/components/FeaturedWork";
-import Principles from "@/components/Principles";
-import BlogTeaser from "@/components/BlogTeaser";
-import ReadingNow from "@/components/ReadingNow";
 import ContactCTA from "@/components/ContactCTA";
+import FeaturedWork from "@/components/FeaturedWork";
 import Footer from "@/components/Footer";
+import Hero from "@/components/Hero";
+import Principles from "@/components/Principles";
+import ReadingNow from "@/components/ReadingNow";
+import Skills from "@/components/Skills"; // <- add
 
 import { caseStudies } from "@/lib/case-studies";
-import { posts } from "@/lib/posts";
 import { readingItems } from "@/lib/reading";
-import ContactRHF from "@/components/ContactRHF";
 
 const readingShelf = readingItems
   .filter((i) => i.status === "reading")
