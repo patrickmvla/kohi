@@ -1,32 +1,88 @@
+// src/components/reading/ReadingExplorer.tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReadingItem } from "@/lib/reading";
 import ReadingCard from "./ReadingCard";
 
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@/components/ui/toggle-group";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
+import { Search, X } from "lucide-react";
+
 type Sort = "recent" | "alpha" | "progress" | "rating";
+
+const norm = (s: string) =>
+  (s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
 
 export default function ReadingExplorer({ items }: { items: ReadingItem[] }) {
   const [q, setQ] = useState("");
   const [types, setTypes] = useState<Set<ReadingItem["type"]>>(new Set());
-  const [statuses, setStatuses] = useState<Set<ReadingItem["status"]>>(
-    new Set()
-  );
+  const [statuses, setStatuses] = useState<Set<ReadingItem["status"]>>(new Set());
   const [sort, setSort] = useState<Sort>("recent");
+  const [isMac, setIsMac] = useState(false);
 
-  const allTypes = useMemo(
-    () => Array.from(new Set(items.map((i) => i.type))).sort(),
-    [items]
-  );
-  const allStatuses = useMemo(
-    () => Array.from(new Set(items.map((i) => i.status))).sort(),
-    [items]
-  );
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setIsMac(/Mac|iPhone|iPad|iPod/.test(navigator.platform) || /Mac OS X/.test(navigator.userAgent));
+  }, []);
+
+  // Keyboard shortcuts: Cmd/Ctrl+K focuses search; "/" focuses; Esc clears when focused
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+
+      if ((e.metaKey || e.ctrlKey) && key === "k") {
+        e.preventDefault();
+        document.getElementById("reading-filter")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        inputRef.current?.focus();
+        return;
+      }
+
+      if (key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const el = document.activeElement as HTMLElement | null;
+        const tag = el?.tagName?.toLowerCase();
+        const isTyping = el?.isContentEditable || tag === "input" || tag === "textarea" || tag === "select";
+        if (!isTyping) {
+          e.preventDefault();
+          inputRef.current?.focus();
+        }
+        return;
+      }
+
+      if (key === "escape" && document.activeElement === inputRef.current) {
+        setQ("");
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const allTypes = useMemo(() => Array.from(new Set(items.map((i) => i.type))).sort(), [items]);
+  const allStatuses = useMemo(() => Array.from(new Set(items.map((i) => i.status))).sort(), [items]);
 
   const filtered = useMemo(() => {
-    const norm = (s: string) => s.toLowerCase().trim();
     const query = norm(q);
-    let list = items.filter((i) => {
+    const list = items.filter((i) => {
       const matchesQuery =
         !query ||
         norm(i.title).includes(query) ||
@@ -37,35 +93,16 @@ export default function ReadingExplorer({ items }: { items: ReadingItem[] }) {
       return matchesQuery && matchesType && matchesStatus;
     });
 
-    const toDate = (i: ReadingItem) =>
-      i.dateFinished || i.dateStarted || "1970-01-01";
+    const toDate = (i: ReadingItem) => i.dateFinished || i.dateStarted || "1970-01-01";
 
-    if (sort === "alpha") {
-      list = list.slice().sort((a, b) => a.title.localeCompare(b.title));
-    } else if (sort === "progress") {
-      list = list.slice().sort((a, b) => (b.progress ?? 0) - (a.progress ?? 0));
-    } else if (sort === "rating") {
-      list = list.slice().sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
-    } else {
-      list = list
-        .slice()
-        .sort((a, b) => +new Date(toDate(b)) - +new Date(toDate(a)));
-    }
-    return list;
+    return sort === "alpha"
+      ? list.slice().sort((a, b) => a.title.localeCompare(b.title))
+      : sort === "progress"
+      ? list.slice().sort((a, b) => (b.progress ?? 0) - (a.progress ?? 0))
+      : sort === "rating"
+      ? list.slice().sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+      : list.slice().sort((a, b) => +new Date(toDate(b)) - +new Date(toDate(a)));
   }, [items, q, types, statuses, sort]);
-
-  const toggle =
-    <T extends string>(set: (fn: (prev: Set<T>) => Set<T>) => void) =>
-    (val: T) =>
-      set((prev) => {
-        const next = new Set(prev);
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        next.has(val) ? next.delete(val) : next.add(val);
-        return next;
-      });
-
-  const toggleType = toggle<ReadingItem["type"]>(setTypes);
-  const toggleStatus = toggle<ReadingItem["status"]>(setStatuses);
 
   const clear = () => {
     setQ("");
@@ -74,105 +111,172 @@ export default function ReadingExplorer({ items }: { items: ReadingItem[] }) {
     setSort("recent");
   };
 
+  const hasActive = q.trim().length > 0 || types.size > 0 || statuses.size > 0 || sort !== "recent";
+
   return (
     <section className="section">
       <div className="container">
-        <div className="sticky top-14 z-10 rounded-lg border border-white/10 bg-black/60 p-3 backdrop-blur">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex w-full items-center gap-2 sm:max-w-md">
-              <label htmlFor="search" className="sr-only">
-                Search reading
-              </label>
-              <input
-                id="search"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Search by title, author, or tag…"
-                className="w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm outline-none ring-brand-600 focus:ring-2"
-              />
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <label htmlFor="sort" className="text-xs text-zinc-500">
-                  Sort
+        {/* Filter/search bar */}
+        <Card
+          id="reading-filter"
+          className="sticky top-14 z-10 border-white/10 bg-black/60 backdrop-blur supports-[backdrop-filter]:bg-black/60"
+        >
+          <CardContent className="p-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              {/* Search */}
+              <div className="relative w-full sm:max-w-md" role="search">
+                <label htmlFor="reading-search" className="sr-only">
+                  Search reading
                 </label>
-                <select
-                  id="sort"
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value as Sort)}
-                  className="rounded-md border border-white/10 bg-transparent px-2 py-1 text-xs outline-none ring-brand-600 focus:ring-2"
-                >
-                  <option value="recent">Recent</option>
-                  <option value="alpha">A–Z</option>
-                  <option value="progress">Progress</option>
-                  <option value="rating">Rating</option>
-                </select>
+                <Search
+                  className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 text-zinc-600"
+                  aria-hidden="true"
+                />
+                <Input
+                  id="reading-search"
+                  ref={inputRef}
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  placeholder="Search by title, author, or tag…"
+                  className="h-9 pl-8 pr-24 border-white/10 bg-transparent placeholder:text-zinc-500 focus-visible:ring-brand-600"
+                  autoComplete="off"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+
+                {/* Trailing actions: clear + kbd hint */}
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                  {q && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setQ("")}
+                      className="h-6 w-6 text-zinc-600 hover:bg-transparent hover:text-zinc-300"
+                      aria-label="Clear search"
+                      title="Clear"
+                    >
+                      <X className="size-4" aria-hidden="true" />
+                    </Button>
+                  )}
+                  <span className="pointer-events-none text-zinc-500" aria-hidden="true" suppressHydrationWarning>
+                    <KbdGroup className="gap-1 text-[10px]">
+                      {isMac ? (
+                        <>
+                          <Kbd>⌘</Kbd>
+                          <Kbd>K</Kbd>
+                        </>
+                      ) : (
+                        <>
+                          <Kbd>Ctrl</Kbd>
+                          <Kbd>K</Kbd>
+                        </>
+                      )}
+                    </KbdGroup>
+                  </span>
+                </div>
               </div>
 
-              {(q ||
-                types.size > 0 ||
-                statuses.size > 0 ||
-                sort !== "recent") && (
-                <button
-                  onClick={clear}
-                  className="text-xs text-zinc-400 hover:text-white"
-                >
-                  Clear
-                </button>
-              )}
+              {/* Sort + Clear */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <label htmlFor="reading-sort" className="text-xs text-zinc-500">
+                    Sort
+                  </label>
+                  <Select value={sort} onValueChange={(v) => setSort(v as Sort)}>
+                    <SelectTrigger id="reading-sort" className="h-8 w-[140px] rounded-md border-white/10 text-xs">
+                      <SelectValue placeholder="Sort" />
+                    </SelectTrigger>
+                    <SelectContent className="text-sm">
+                      <SelectItem value="recent">Recent</SelectItem>
+                      <SelectItem value="alpha">A–Z</SelectItem>
+                      <SelectItem value="progress">Progress</SelectItem>
+                      <SelectItem value="rating">Rating</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {hasActive && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clear}
+                    className="text-zinc-400 hover:text-white"
+                  >
+                    Clear
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Type chips */}
-          <div className="mt-3 flex items-center gap-2 overflow-x-auto">
-            {allTypes.map((t) => {
-              const active = types.has(t);
-              return (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => toggleType(t)}
-                  aria-pressed={active}
-                  className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs ${
-                    active
-                      ? "border-brand-600 bg-brand-600/10 text-white"
-                      : "border-white/10 text-zinc-400 hover:text-white"
-                  }`}
+            {/* Type chips */}
+            {allTypes.length > 0 && (
+              <ScrollArea className="mt-3">
+                <ToggleGroup
+                  type="multiple"
+                  value={Array.from(types)}
+                  onValueChange={(vals) => setTypes(new Set(vals as ReadingItem["type"][]))}
+                  aria-label="Filter by type"
+                  className="flex w-max items-center gap-2 pb-2"
                 >
-                  {t}
-                </button>
-              );
-            })}
-          </div>
+                  {allTypes.map((t) => (
+                    <ToggleGroupItem
+                      key={t}
+                      value={t}
+                      aria-pressed={types.has(t)}
+                      className="h-7 whitespace-nowrap rounded-full border border-white/10 px-3 text-xs data-[state=on]:border-brand-600 data-[state=on]:bg-brand-600/10 data-[state=on]:text-white"
+                    >
+                      {t}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+            )}
 
-          {/* Status chips */}
-          <div className="mt-2 flex items-center gap-2 overflow-x-auto">
-            {allStatuses.map((s) => {
-              const active = statuses.has(s);
-              return (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => toggleStatus(s)}
-                  aria-pressed={active}
-                  className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs ${
-                    active
-                      ? "border-brand-600 bg-brand-600/10 text-white"
-                      : "border-white/10 text-zinc-400 hover:text-white"
-                  }`}
+            {/* Status chips */}
+            {allStatuses.length > 0 && (
+              <ScrollArea className="mt-2">
+                <ToggleGroup
+                  type="multiple"
+                  value={Array.from(statuses)}
+                  onValueChange={(vals) => setStatuses(new Set(vals as ReadingItem["status"][]))}
+                  aria-label="Filter by status"
+                  className="flex w-max items-center gap-2 pb-2"
                 >
-                  {s}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+                  {allStatuses.map((s) => (
+                    <ToggleGroupItem
+                      key={s}
+                      value={s}
+                      aria-pressed={statuses.has(s)}
+                      className="h-7 whitespace-nowrap rounded-full border border-white/10 px-3 text-xs capitalize data-[state=on]:border-brand-600 data-[state=on]:bg-brand-600/10 data-[state=on]:text-white"
+                    >
+                      {s}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+            )}
+          </CardContent>
+        </Card>
 
+        {/* Results */}
         {filtered.length === 0 ? (
-          <p className="mt-8 text-sm text-zinc-400">
-            No items match your filters.
-          </p>
+          <div className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-6 text-sm text-zinc-400">
+            <p>No items match your filters{q ? ` for “${q}”` : ""}.</p>
+            {hasActive && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clear}
+                className="mt-3 border-white/10 text-zinc-300 hover:border-white/20 hover:text-white"
+              >
+                Reset filters
+              </Button>
+            )}
+          </div>
         ) : (
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((item) => (

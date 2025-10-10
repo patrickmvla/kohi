@@ -1,19 +1,10 @@
 @import "tailwindcss";
 
-/* Print helpers for resume */
-@media print {
-  :root { color-scheme: light; }
-  body { background: #fff !important; color: #000 !important; }
-  a { color: #000 !important; text-decoration: underline; }
-}
-.avoid-break { break-inside: avoid; page-break-inside: avoid; }
-
-/* Tailwind v4 theme tokens */
 @theme {
   /* JetBrains Mono via next/font variable */
   --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-  /* “Kohi” — warm coffee palette */
+  /* "Kohi" — warm coffee palette */
   --color-brand-50:  #faf7f2;
   --color-brand-100: #ede3d3;
   --color-brand-200: #dac4a9;
@@ -26,33 +17,58 @@
   --color-brand-900: #3b240f;
 }
 
-:root { color-scheme: dark; --section-space: clamp(1.75rem, 3vw, 2.75rem);}
+@layer base {
+  :root {
+    color-scheme: dark;
+    --section-space: clamp(1.75rem, 3vw, 2.75rem);
+  }
 
-html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+  }
 
-body {
-  background: #0a0a0a; /* zinc-950-ish */
-  color: rgb(228 228 231); /* zinc-200 */
-  font-feature-settings: "ss01" 1, "ss02" 1;
+  body {
+    background: #0a0a0a; /* zinc-950-ish */
+    color: rgb(228 228 231); /* zinc-200 */
+    font-feature-settings: "ss01" 1, "ss02" 1;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-brand-600) 28%, transparent);
+  }
 }
 
-::selection {
-  background: color-mix(in oklab, var(--color-brand-600) 28%, transparent);
+/* Print helpers for resume */
+@media print {
+  :root { 
+    color-scheme: light; 
+  }
+  
+  body { 
+    background: #fff !important; 
+    color: #000 !important; 
+  }
+  
+  a { 
+    color: #000 !important; 
+    text-decoration: underline; 
+  }
 }
 
-/* Subtle container rhythm helpers (optional) */
+.avoid-break { 
+  break-inside: avoid; 
+  page-break-inside: avoid; 
+}
+
 /* Section spacing: default + compact presets */
 .section {
-  /* Default section spacing (keeps existing feel site‑wide) */
   padding-block: var(--section-space, clamp(3rem, 6vw, 5rem));
 }
 
-/* Compact page preset (nice for About) */
 .section-compact {
   --section-space: clamp(1.75rem, 3vw, 2.75rem);
 }
 
-/* Even tighter, if you ever want it */
 .section-tight {
   --section-space: clamp(1.25rem, 2.5vw, 2rem);
 }
