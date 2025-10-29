@@ -1,7 +1,6 @@
-// src/components/projects/FeaturedCaseStudy.tsx
 import Link from "next/link";
 import type { CaseStudy } from "@/lib/case-studies";
-import ProjectMedia from "./ProjectMedia";
+import ProjectMedia from "@/components/projects/ProjectMedia";
 import { ArrowRight, ExternalLink, Code2, Check } from "lucide-react";
 
 export default function FeaturedCaseStudy({ cs }: { cs: CaseStudy }) {

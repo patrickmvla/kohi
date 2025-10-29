@@ -1,4 +1,3 @@
-// components/projects/ProjectMedia.tsx
 "use client";
 
 import Image, { type StaticImageData } from "next/image";
@@ -9,16 +8,18 @@ import {
   Link as LinkIcon,
   FileText,
   Clapperboard,
+  BookOpen,
   Package,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 
 const iconMap = {
   Mail,
   Wand2,
   Link: LinkIcon,
   FileText,
-  Clapperboard
+  Clapperboard,
+  BookOpen,
 } as const;
 
 export type IconName = keyof typeof iconMap;
@@ -38,6 +39,8 @@ type Props = {
   alt?: string; // optional custom alt; defaults to title
   priority?: boolean; // pass true for LCP media
   sizes?: string; // e.g., "(min-width: 1024px) 33vw, 100vw"
+  fit?: "cover" | "contain"; // NEW: control object-fit
+  position?: CSSProperties["objectPosition"]; // NEW: control object-position (e.g., "center top")
 };
 
 export default function ProjectMedia({
@@ -49,10 +52,13 @@ export default function ProjectMedia({
   alt,
   priority = false,
   sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+  fit = "cover",
+  position = "center",
 }: Props) {
   const [loaded, setLoaded] = useState(false);
   const Icon = resolveIcon(icon);
   const altText = alt ?? title;
+  const fitClass = fit === "contain" ? "object-contain" : "object-cover";
 
   return (
     <div
@@ -72,7 +78,8 @@ export default function ProjectMedia({
             fill
             sizes={sizes}
             priority={priority}
-            className="object-cover opacity-0 transition-opacity duration-300 data-[loaded=true]:opacity-100"
+            className={`${fitClass} opacity-0 transition-opacity duration-300 data-[loaded=true]:opacity-100`}
+            style={{ objectPosition: position }}
             onLoadingComplete={() => setLoaded(true)}
             data-loaded={loaded}
           />

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -5,13 +6,11 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState,
 } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import type { CaseStudy } from "@/lib/case-studies";
-import CaseStudyCard from "./CaseStudyCard";
-import ProjectMedia from "./ProjectMedia";
+import type { ResolvedCaseStudy } from "@/lib/data";
+import ProjectMedia from "@/components/projects/ProjectMedia";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -27,10 +26,8 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-import { LayoutGrid, List as ListIcon, Search, X } from "lucide-react";
-
-type View = "grid" | "list";
-type Sort = "recent" | "alpha";
+import { Search, X } from "lucide-react";
+import { useProjectsExplorer, type Sort } from "@/stores/useProjectsExplorer";
 
 // Robust, diacritic-insensitive normalizer
 const norm = (s: string) =>
@@ -40,16 +37,23 @@ const norm = (s: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .trim();
 
-export default function ProjectsExplorer({ studies }: { studies: CaseStudy[] }) {
-  // State
-  const [q, setQ] = useState("");
-  const [categories, setCategories] = useState<string[]>([]);
-  const [view, setView] = useState<View>("grid");
-  const [sort, setSort] = useState<Sort>("recent");
-  const [isMac, setIsMac] = useState(false);
+export default function ProjectsExplorer({ studies }: { studies: ResolvedCaseStudy[] }) {
+  // Store state
+  const q = useProjectsExplorer((s) => s.q);
+  const categories = useProjectsExplorer((s) => s.categories);
+  const sort = useProjectsExplorer((s) => s.sort);
+  const isMac = useProjectsExplorer((s) => s.isMac);
+  const initialized = useProjectsExplorer((s) => s.initialized);
+
+  // Store actions
+  const setQ = useProjectsExplorer((s) => s.setQ);
+  const setCategories = useProjectsExplorer((s) => s.setCategories);
+  const setSort = useProjectsExplorer((s) => s.setSort);
+  const setIsMac = useProjectsExplorer((s) => s.setIsMac);
+  const setInitialized = useProjectsExplorer((s) => s.setInitialized);
+  const clear = useProjectsExplorer((s) => s.clear);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const initRef = useRef(false);
 
   // Router/URL sync
   const router = useRouter();
@@ -62,7 +66,7 @@ export default function ProjectsExplorer({ studies }: { studies: CaseStudy[] }) 
       /Mac|iPhone|iPad|iPod/.test(navigator.platform) ||
         /Mac OS X/.test(navigator.userAgent)
     );
-  }, []);
+  }, [setIsMac]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -103,16 +107,14 @@ export default function ProjectsExplorer({ studies }: { studies: CaseStudy[] }) 
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [setQ]);
 
-  // Parse initial state from URL
+  // Hydrate store from URL (once)
   useEffect(() => {
-    if (initRef.current) return;
-    initRef.current = true;
+    if (initialized) return;
 
     const initialQ = searchParams.get("q") ?? "";
     const initialSort = (searchParams.get("sort") as Sort) || "recent";
-    const initialView = (searchParams.get("view") as View) || "grid";
     const initialCats = (searchParams.get("cat") ?? "")
       .split(",")
       .map((s) => s.trim())
@@ -120,14 +122,15 @@ export default function ProjectsExplorer({ studies }: { studies: CaseStudy[] }) 
 
     setQ(initialQ);
     setSort(initialSort);
-    setView(initialView);
     setCategories(initialCats);
-  }, [searchParams]);
+    setInitialized(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialized, searchParams]);
 
-  // Sync state -> URL (q deferred)
+  // Sync store -> URL (q deferred). No "view" param (list-only).
   const dq = useDeferredValue(q);
   useEffect(() => {
-    if (!initRef.current) return;
+    if (!initialized) return;
 
     const params = new URLSearchParams(searchParams.toString());
 
@@ -140,13 +143,13 @@ export default function ProjectsExplorer({ studies }: { studies: CaseStudy[] }) 
     if (sort !== "recent") params.set("sort", sort);
     else params.delete("sort");
 
-    if (view !== "grid") params.set("view", view);
-    else params.delete("view");
+    // Remove any lingering "view" from old URLs
+    params.delete("view");
 
     const qs = params.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dq, categories, sort, view]);
+  }, [dq, categories, sort, initialized]);
 
   // Categories from studies
   const allCategories = useMemo(
@@ -216,12 +219,6 @@ export default function ProjectsExplorer({ studies }: { studies: CaseStudy[] }) 
     }
     return arr;
   }, [studies, dq, categoriesSet, sort]);
-
-  const clearFilters = () => {
-    setQ("");
-    setCategories([]);
-    setSort("recent");
-  };
 
   const hasActiveFilters =
     q.trim().length > 0 || categories.length > 0 || sort !== "recent";
@@ -295,35 +292,8 @@ export default function ProjectsExplorer({ studies }: { studies: CaseStudy[] }) 
                   </div>
                 </div>
 
-                {/* View, Sort, Clear */}
+                {/* Sort + Clear */}
                 <div className="flex items-center gap-3">
-                  {/* View toggle */}
-                  <ToggleGroup
-                    type="single"
-                    value={view}
-                    onValueChange={(v) => v && setView(v as View)}
-                    aria-label="View"
-                    className="hidden sm:flex"
-                  >
-                    <ToggleGroupItem
-                      value="grid"
-                      aria-label="Grid view"
-                      className="h-8 gap-1 rounded-md border border-white/10 px-2 text-xs data-[state=on]:border-brand-600 data-[state=on]:bg-brand-600/10 data-[state=on]:text-white"
-                    >
-                      <LayoutGrid className="size-3.5" />
-                      Grid
-                    </ToggleGroupItem>
-                    <ToggleGroupItem
-                      value="list"
-                      aria-label="List view"
-                      className="h-8 gap-1 rounded-md border border-white/10 px-2 text-xs data-[state=on]:border-brand-600 data-[state=on]:bg-brand-600/10 data-[state=on]:text-white"
-                    >
-                      <ListIcon className="size-3.5" />
-                      List
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-
-                  {/* Sort */}
                   <div className="flex items-center gap-2">
                     <label htmlFor="sort" className="text-xs text-zinc-500">
                       Sort
@@ -343,7 +313,7 @@ export default function ProjectsExplorer({ studies }: { studies: CaseStudy[] }) 
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={clearFilters}
+                      onClick={clear}
                       className="text-zinc-400 hover:text-white"
                     >
                       Clear
@@ -396,8 +366,8 @@ export default function ProjectsExplorer({ studies }: { studies: CaseStudy[] }) 
           All projects
         </h2>
 
-        {/* Results */}
-        <div id="projects-results">
+        {/* Results (list-only) */}
+        <div id="projects-results" role="list">
           {filtered.length === 0 ? (
             <div className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-6 text-sm text-zinc-400">
               <p>No projects match your filters{q ? ` for “${q}”` : ""}.</p>
@@ -405,35 +375,40 @@ export default function ProjectsExplorer({ studies }: { studies: CaseStudy[] }) 
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={clearFilters}
+                  onClick={clear}
                   className="mt-3 border-white/10 text-zinc-300 hover:border-white/20 hover:text-white"
                 >
                   Reset filters
                 </Button>
               )}
             </div>
-          ) : view === "grid" ? (
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((cs) => (
-                <CaseStudyCard key={cs.slug} cs={cs} />
-              ))}
-            </div>
           ) : (
             <div className="mt-8 space-y-4">
               {filtered.map((cs) => {
                 const href = `/projects/${cs.slug}`;
+                const stats = (cs as any).stats as { label: string; value: string }[] | undefined;
+
                 return (
-                  <article key={cs.slug} className="rounded-xl surface p-4">
+                  <article key={cs.slug} role="listitem" className="rounded-xl surface p-4">
                     <div className="flex flex-col gap-4 sm:flex-row">
-                      <div className="sm:w-64">
+                      <div className="sm:w-72">
                         <Link
                           href={href}
                           className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
                           aria-label={`Open case study: ${cs.title}`}
                         >
-                          <ProjectMedia title={cs.title} image={cs.image} icon={cs.icon} />
+                          <ProjectMedia
+                            title={cs.title}
+                            image={cs.image}
+                            icon={cs.icon}
+                            ratioClass="aspect-[4/3]"
+                            fit="contain"
+                            position="center"
+                            className="border-0 bg-transparent"
+                          />
                         </Link>
                       </div>
+
                       <div className="min-w-0 flex-1">
                         <div className="text-xs text-zinc-500">
                           {cs.period} · {cs.role} · {cs.category}
@@ -447,8 +422,29 @@ export default function ProjectsExplorer({ studies }: { studies: CaseStudy[] }) 
                             {cs.title}
                           </Link>
                         </h3>
+
                         {cs.tagline && <p className="text-sm text-brand-300">{cs.tagline}</p>}
                         <p className="mt-2 text-sm text-zinc-400">{cs.summary}</p>
+
+                        {/* Compact stats/metrics */}
+                        {Array.isArray(stats) && stats.length > 0 ? (
+                          <ul className="mt-3 flex flex-wrap gap-2 text-[11px] text-brand-300">
+                            {stats.slice(0, 2).map((m, i) => (
+                              <li key={`${m.label}-${i}`} className="rounded border border-white/10 px-2 py-0.5">
+                                {m.label}: {m.value}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : cs.metrics?.length ? (
+                          <ul className="mt-3 flex flex-wrap gap-2 text-[11px] text-brand-300">
+                            {cs.metrics.slice(0, 3).map((m, i) => (
+                              <li key={`${m}-${i}`} className="rounded border border-white/10 px-2 py-0.5">
+                                {m}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+
                         <div className="mt-3 flex flex-wrap gap-2 text-xs text-zinc-400">
                           {cs.stack.slice(0, 10).map((s) => (
                             <span key={s} className="rounded border border-white/10 px-2 py-0.5">
@@ -456,6 +452,7 @@ export default function ProjectsExplorer({ studies }: { studies: CaseStudy[] }) 
                             </span>
                           ))}
                         </div>
+
                         <div className="mt-4 flex flex-wrap gap-4 text-sm">
                           {cs.links?.caseStudy && (
                             <a className="text-zinc-400 hover:text-white" href={cs.links.caseStudy}>

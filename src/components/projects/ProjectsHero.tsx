@@ -1,12 +1,11 @@
-// components/projects/ProjectsHero.tsx
 import Link from "next/link";
 
 const FILTERS = [
   { label: "All", href: "/projects" },
-  { label: "Case studies", href: "/projects?type=case-study" },
-  { label: "Client work", href: "/projects?type=client" },
-  { label: "Open source", href: "/projects?type=open-source" },
-  { label: "Experiments", href: "/projects?type=experiment" },
+  { label: "Product", href: "/projects?cat=Product" },
+  { label: "Tooling", href: "/projects?cat=Tooling" },
+  { label: "Systems", href: "/projects?cat=Systems" },
+  { label: "Open source", href: "/projects?cat=Open%20Source" },
 ];
 
 export default function ProjectsHero() {

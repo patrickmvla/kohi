@@ -58,7 +58,10 @@ export const caseStudies: CaseStudy[] = [
     ],
     // image: "/images/projects/prompt-studio/cover.png",
     icon: "Wand2",
-    links: { live: "https://prompt-studio-liard.vercel.app", code: "https://github.com/patrickmvla/prompt-studio" },
+    links: {
+      live: "https://prompt-studio-liard.vercel.app",
+      code: "https://github.com/patrickmvla/prompt-studio",
+    },
     // gallery: [
     //   {
     //     src: "/images/projects/prompt-studio/editor.png",
@@ -73,32 +76,89 @@ export const caseStudies: CaseStudy[] = [
     // ],
   },
   {
-  slug: "eiga",
-  title: "Eiga",
+    slug: "eiga",
+    title: "Eiga",
+    tagline:
+      "A private cinema club for people who love thinking about movies as much as watching them.",
+    summary:
+      "Eiga is a private cinema club for people who love thinking about movies as much as watching them. We keep membership small, the cadence steady, and the conversation deliberate. The goal isn’t to collect ratings—it’s to build an evolving conversation among a committed group.",
+    role: "Indie Project",
+    period: "2025",
+    category: "Product",
+    stack: ["Supabase", "Supabase Realtime", "Drizzle ORM", "Resend", "TMDB"],
+
+    highlights: [
+      "Invite‑only membership; small by design",
+      "Steady cadence; deliberate, longform discussion",
+      "Conversation over ratings; shared notes and reflection",
+    ],
+    metrics: ["Private", "Steady cadence", "Longform"],
+    impact: [
+      "Quality over quantity.",
+      "Presence over performance.",
+      "Curiosity over consensus.",
+    ],
+     image: "/images/projects/eiga/eiga.png",
+    icon: "Clapperboard", // add to ProjectMedia iconMap if not already
+    links: {
+      live: "https://eiiga.vercel.app",
+      code: "https://github.com/patrickmvla/eiga",
+    },
+  },
+ {
+  slug: "ronbun",
+  title: "Ronbun",
   tagline:
-    "A private cinema club for people who love thinking about movies as much as watching them.",
+    "Fast, personal AI/ML paper tracker — summaries, explainers, watchlists.",
   summary:
-    "Eiga is a private cinema club for people who love thinking about movies as much as watching them. We keep membership small, the cadence steady, and the conversation deliberate. The goal isn’t to collect ratings—it’s to build an evolving conversation among a committed group.",
+    "Web-only tracker for arXiv CS/ML papers that surfaces relevant new work, streams quick summaries and explainers, extracts structured fields, integrates PwC leaderboards, and delivers a personal feed and weekly digest — all grounded strictly on title/abstract (+ optional README).",
   role: "Indie Project",
   period: "2025",
   category: "Product",
-  stack: ["Supabase", "Supabase Realtime", "Drizzle ORM", "Resend", "TMDB"],
-   featured: true,
+  stack: [
+    "Next.js",
+    "Tailwind",
+    "shadcn/ui",
+    "Zustand",
+    "TanStack Query",
+    "React Hook Form",
+    "Zod",
+    "Supabase (Postgres, Auth, Storage)",
+    "Drizzle ORM",
+    "GroqCloud",
+    "arXiv API",
+    "ar5iv",
+    "Papers with Code API",
+  ],
+  featured: true,
   highlights: [
-    "Invite‑only membership; small by design",
-    "Steady cadence; deliberate, longform discussion",
-    "Conversation over ratings; shared notes and reflection",
+    "Streaming summaries, multi‑level explainers, and reviewer mode (Groq)",
+    "Watchlists with personal feed and weekly email digest",
+    "PwC leaderboards + GitHub repo detection and quickstart",
   ],
-  metrics: ["Private", "Steady cadence", "Longform"],
+  metrics: [
+    "Web‑only, no RAG",
+    "Keyless arXiv/PwC",
+    "Grounded on title/abstract (+ README)",
+  ],
+  stats: [
+    { label: "Grounding", value: "Title/abstract (+ README)" },
+    { label: "RAG", value: "None" },
+    {
+      label: "Categories",
+      value: "cs.AI, cs.LG, cs.CL, cs.CV, cs.NE, stat.ML",
+    },
+    { label: "Streaming", value: "Yes (Groq Llama 3.1)" },
+    { label: "Digest", value: "Weekly" },
+  ],
   impact: [
-    "Quality over quantity.",
-    "Presence over performance.",
-    "Curiosity over consensus.",
+    "Cuts skim time with concise summaries and structured extraction.",
+    "Keeps builders and researchers current via watchlists and momentum ranking.",
+    "Transparent scoring and ‘Not stated’ guardrails reduce hallucinations.",
   ],
-  // image: "/images/projects/eiga/cover.png",
-  icon: "Clapperboard", // add to ProjectMedia iconMap if not already
-  links: { live: "https://eiiga.vercel.app" , code:"https://github.com/patrickmvla/eiga"},
-  
+  image: "/images/projects/ronbun/cover.png", // ← add this
+  icon: "BookOpen", // keep as fallback
+  links: { live: "https://ronbunn.vercel.app" },
 },
   {
     slug: "ai-gmail-sorter",
@@ -127,66 +187,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     // image: "/images/projects/ai-gmail-sorter/cover.png",
     icon: "Mail",
-    links: {  code: "https://github.com/patrickmvla/ai-gmail-sorter" },
+    links: { code: "https://github.com/patrickmvla/ai-gmail-sorter" },
   },
-  {
-    slug: "linklift",
-    title: "LinkLift",
-    tagline: "Production‑grade URL shortener on the edge.",
-    summary:
-      "Sub‑millisecond redirects with real‑time analytics, custom domains, QR codes, and expiry support.",
-    role: "Indie Project",
-    period: "2025",
-    category: "Product",
-    stack: ["Vercel Edge", "Next.js", "Redis", "Workers/Queues"],
-    highlights: [
-      "Sub‑ms redirects, per‑link analytics",
-      "Custom domains + QR codes + expiration",
-      "Queue‑backed analytics, 99.9% uptime",
-    ],
-    metrics: ["1M+ clicks tracked"],
-    stats: [
-      { label: "Clicks tracked", value: "1M+" },
-      { label: "Edge p50", value: "<1ms" },
-      { label: "Uptime", value: "99.9%" },
-    ],
-    impact: [
-      "Reliable, low‑latency redirect path with edge caching and fallback.",
-      "Analytics pipeline scales via queues without impacting redirect path.",
-    ],
-    // image: "/images/projects/linklift/cover.png",
-    icon: "Link",
-    links: { live: "#", code: "#" },
-    // gallery: [
-    //   {
-    //     src: "/images/projects/linklift/dashboard.png",
-    //     alt: "Analytics dashboard",
-    //     ratio: "aspect-[4/3]",
-    //   },
-    // ],
-  },
-  {
-    slug: "pdf2md",
-    title: "pdf2md",
-    tagline: "Privacy‑first PDF → Markdown converter.",
-    summary:
-      "All processing in the browser. Drag‑and‑drop batch conversion with progress and offline PWA.",
-    role: "Indie Project",
-    period: "2025",
-    category: "Tooling",
-    stack: ["PWA", "Web Workers", "React", "Next.js"],
-    highlights: [
-      "Client‑side only — 100% privacy (no uploads)",
-      "Batch conversion with live progress",
-      "Offline support via PWA",
-    ],
-    metrics: ["Offline‑ready PWA"],
-    stats: [
-      { label: "Uploads", value: "0 (client‑only)" },
-      { label: "Offline", value: "Yes" },
-    ],
-    // image: "/images/projects/pdf2md/cover.png",
-    icon: "FileText",
-    links: { live: "#", code: "#" },
-  },
+
 ];

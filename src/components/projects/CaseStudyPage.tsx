@@ -16,7 +16,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import ProjectMedia from "./ProjectMedia";
+import ProjectMedia from "@/components/projects/ProjectMedia";
 import { ArrowRight, ExternalLink, Code2, Check } from "lucide-react";
 import type { ReactNode } from "react";
 import type { CaseStudy } from "@/lib/case-studies";
@@ -249,6 +249,9 @@ export default function CaseStudyPage({
                     icon={cs.icon}
                     ratioClass="aspect-[4/3]"
                     priority
+                    fit="contain"      // no cropping; show full screenshot
+                    position="center"
+                    // framed={false}     // avoid double border: Card provides the frame
                   />
                 </Card>
               </div>
@@ -386,6 +389,9 @@ export default function CaseStudyPage({
                             image={g.src}
                             alt={g.alt}
                             ratioClass={g.ratio ?? "aspect-[4/3]"}
+                            fit="contain"
+                            position="center"
+                            // framed={false}  // Card frames the gallery item; avoid double border
                           />
                         </Card>
                       ))}
